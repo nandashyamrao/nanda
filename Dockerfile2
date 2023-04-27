@@ -1,0 +1,14 @@
+# Set the base image
+FROM python:3.6
+
+# Set the working directory
+WORKDIR /app
+
+# Install the required libraries
+RUN pip install pandas numpy scikit-learn boto3 sagemaker
+
+# Copy the training script into the container
+COPY train.py /app
+
+# Define the entrypoint
+ENTRYPOINT ["python", "train.py"]
