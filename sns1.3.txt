@@ -1,0 +1,44 @@
+title Dynatrace S3 Lambda Forwarder Workflow for CloudTrail Events
+
+Account A [color: blue,  icon: aws] {
+      CloudTrail A [icon: aws-cloudtrail]
+    EC2 A [icon: aws-ec2]
+  
+  
+    
+}
+
+Account B [color: green,  icon: aws] {
+      CloudTrail B [icon: aws-cloudtrail]
+    EC2 B [icon: aws-ec2]
+  
+  
+  }
+
+Account MGMT [color: red,  icon: aws] {
+    Terraform [icon: terraform]
+  
+  Lambda [icon: aws-lambda]
+  SNS Topic [icon: aws-sns]
+  S3 Bucket [icon: aws-s3]
+}
+Account EMS [color: purple,  icon: aws] {
+  DT S3 Lambda [icon: aws-lambda]
+  
+  AppConfig [icon: aws-appconfig]
+  Parameter Store [icon: aws-ssm]
+}
+Dynatrace API [icon: api]
+S3 Bucket > Lambda: triggers Lambda on PutObject-S3 action event
+Lambda > SNS Topic: writes message into the SNS topic
+CloudTrail A > S3 Bucket: store CT events
+CloudTrail B > S3 Bucket: sends CT events to S3 bucket
+SNS Topic > DT S3 Lambda: New mesage in SNS topic triggers DT S3 Lambda 
+DT S3 Lambda > S3 Bucket: reads S3 object
+DT S3 Lambda > Dynatrace API: extracts s3object and sends CT events
+Terraform > CloudTrail A: create CloudTrail event 
+Terraform > CloudTrail B: create CloudTrail event
+DT S3 Lambda > AppConfig: loads DT log-forwarding & processing rules
+DT S3 Lambda > Parameter Store: retrieves DT API Key
+CloudTrail A > EC2 A: capture events
+CloudTrail B > EC2 B: capture events
