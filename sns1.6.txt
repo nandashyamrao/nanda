@@ -1,0 +1,68 @@
+title Dynatrace S3 Lambda Forwarder Workflow for AWS CloudTrail Events
+
+Account Test [color: blue,  icon: aws] {
+      CloudTrail Test [icon: aws-cloudtrail]
+   DynamoDB [icon: aws-dynamodb]
+   
+  
+  
+    
+}
+
+Account Prod [color: green,  icon: aws] {
+      CloudTrail Prod [icon: aws-cloudtrail]
+    EC2 B [icon: aws-EC2]
+    
+  
+  
+  }
+
+Account InfoSec MGMT [color: red,  icon: aws] {
+    Terraform [icon: terraform]
+  
+  Lambda [icon: aws-lambda]
+  SNS Topic [icon: aws-sns]
+  S3 Bucket Event-Trail-Test [icon: aws-s3]
+  S3 Bucket Event-Trail-Prod [icon: aws-s3]
+}
+Account EMS [color: purple,  icon: aws] {
+  DT S3 Lambda [icon: aws-lambda]
+  
+  AppConfig [icon: aws-appconfig]
+  Parameter Store [icon: aws-ssm]
+}
+Dynatrace API [icon: api]
+Lambda > SNS Topic: writes message into the SNS topic
+DT S3 Lambda > Dynatrace API: extracts s3object and sends CT events
+Terraform > CloudTrail Test: create CloudTrail event 
+Terraform > CloudTrail Prod: create CloudTrail event
+DT S3 Lambda > AppConfig: loads DT log-forwarding & processing rules
+DT S3 Lambda > Parameter Store: retrieves DT API Key
+CloudTrail Test > DynamoDB: capture events
+
+CloudTrail Prod > EC2 B: capture events
+
+CloudTrail Test > S3 Bucket Event-Trail-Test: send CT events to S3 bucket
+CloudTrail Prod > S3 Bucket Event-Trail-Prod: sends CT events to S3 bucket
+S3 Bucket Event-Trail-Test > Lambda: triggers Lambda on PutObject-S3 action event
+S3 Bucket Event-Trail-Prod > Lambda: triggers Lambda on PutObject-S3 action event
+DT S3 Lambda > S3 Bucket Event-Trail-Test: reads S3 object
+DT S3 Lambda > S3 Bucket Event-Trail-Prod: reads S3 object
+SNS Topic > DT S3 Lambda: new message SNS triggers DT S3 Lambda
+DT S3 Lambda > Dynatrace API: extracts s3object and sends CT events 
+Terraform > CloudTrail Test: create CloudTrail event 
+DT S3 Lambda > AppConfig: loads DT log-forwarding & processing rules 
+DT S3 Lambda > Parameter Store: retrieves DT API Key 
+CloudTrail Test > DynamoDB: capture events 
+CloudTrail Test > S3 Bucket Event-Trail-Test: send CT events to S3 bucket
+S3 Bucket Event-Trail-Test > Lambda: triggers Lambda on PutObject-S3 action event 
+DT S3 Lambda > S3 Bucket Event-Trail-Test: reads S3 object
+Lambda > SNS Topic: writes message into the SNS topic
+DT S3 Lambda > Dynatrace API: extracts s3object and sends CT events 
+Terraform > CloudTrail Prod: create CloudTrail event 
+DT S3 Lambda > AppConfig: loads DT log-forwarding & processing rules 
+DT S3 Lambda > Parameter Store: retrieves DT API Key 
+CloudTrail Prod > EC2 B: capture events 
+CloudTrail Prod > S3 Bucket Event-Trail-Prod: sends CT events to S3 bucket 
+S3 Bucket Event-Trail-Prod > Lambda: triggers Lambda on PutObject-S3 action event 
+DT S3 Lambda > S3 Bucket Event-Trail-Prod: reads S3 object
