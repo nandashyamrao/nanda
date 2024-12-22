@@ -1,9 +1,5 @@
-# Rewriting the expanded guide with Kubernetes-specific examples into a Markdown file
 
-content = """
-# **Entity Properties in Dynatrace: Metadata, Attributes, Tags, and Labels**
-
----
+# **Entity Properties in Dynatrace: Metadata, Attributes, Tags, and Labels. 
 
 ## **1. What Are Entity Properties?**
 
@@ -175,10 +171,6 @@ fetch logs
 | **Combine Metadata with Attributes**| Filter pods by namespace (`metadata`) and CPU/memory usage (`attributes`).  |
 | **Incorporate Labels for Context**  | Use labels to track application owners, priorities, and deployment versions.|
 
----
-
-This expanded guide includes Kubernetes-specific examples to demonstrate the power of **metadata**, **attributes**, **tags**, and **labels** in refining queries and organizing your environment in Dynatrace.
-"""
 
 file_path = "/mnt/data/Dynatrace_Entity_Properties_Kubernetes.md"
 with open(file_path, "w") as file:
