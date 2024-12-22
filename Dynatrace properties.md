@@ -161,7 +161,144 @@ fetch logs
 | Pod memory spike              | critical     |
 
 ---
+# Saving the markdown content for Dynatrace Entity Properties Examples
 
+content = """
+# **Entity Properties in Dynatrace: Expanded Examples**
+
+---
+
+## **1. Metadata**
+
+**Metadata** provides contextual information automatically collected about an entity’s environment or identity.
+
+### **Examples of Metadata**
+
+| **Entity Type**       | **Metadata Example**               | **Description**                                 |
+|-----------------------|------------------------------------|-----------------------------------------------|
+| Host                  | `host.cloudProvider`              | Cloud provider (e.g., AWS, Azure, GCP).        |
+| Host                  | `host.osType`                     | OS type (e.g., Linux, Windows).                |
+| Host                  | `host.region`                     | Geographical region (e.g., `us-east-1`).       |
+| Service               | `service.type`                    | Type of service (e.g., Web Service, Database). |
+| Service               | `service.environment`             | Service environment (e.g., Production, Staging). |
+| Kubernetes Pod        | `kubernetes.cluster.name`         | Kubernetes cluster name.                       |
+| Kubernetes Pod        | `kubernetes.namespace`            | Namespace to which the pod belongs.            |
+| Kubernetes Node       | `kubernetes.node.name`            | Kubernetes node name.                          |
+| Kubernetes Pod        | `kubernetes.container.name`       | Container name inside the pod.                 |
+| Cloud Instance        | `cloud.instanceId`                | Unique cloud instance ID.                      |
+| Cloud Instance        | `cloud.region`                    | Cloud region (e.g., `ap-south-1`).             |
+| Application           | `application.version`             | Version of the application.                    |
+| Application           | `application.users`               | Number of active users.                        |
+| Logs                  | `log.source.aws.s3.bucket.name`   | S3 bucket name where the logs originate.       |
+| Logs                  | `log.source.aws.s3.key.name`      | Key name for the log object in S3.             |
+| Process Group         | `processGroup.technology`         | Technology (e.g., Java, Python, Nginx).        |
+| Process               | `process.commandLineArguments`    | Command line arguments used to start the process. |
+| ActiveGate            | `activeGate.id`                   | ID of the ActiveGate.                          |
+| Network Device        | `network.device.type`             | Type of network device (e.g., Router, Switch). |
+| Database              | `database.vendor`                 | Vendor of the database (e.g., MySQL, Oracle).  |
+
+---
+
+## **2. Attributes**
+
+**Attributes** describe operational characteristics or performance metrics associated with an entity.
+
+### **Examples of Attributes**
+
+| **Entity Type**       | **Attribute Example**              | **Description**                               |
+|-----------------------|------------------------------------|---------------------------------------------|
+| Host                  | `host.cpuCores`                   | Number of CPU cores available on the host.   |
+| Host                  | `host.memory.total`               | Total memory of the host.                    |
+| Host                  | `host.disk.space.available`       | Available disk space.                        |
+| Service               | `service.responseTime`            | Response time of the service.                |
+| Service               | `service.errorRate`               | Percentage of errors in the service.         |
+| Kubernetes Pod        | `kubernetes.container.cpuUsage`   | CPU usage of the container in the pod.       |
+| Kubernetes Pod        | `kubernetes.container.memoryUsage`| Memory usage of the container.               |
+| Kubernetes Node       | `kubernetes.node.network.incomingTraffic` | Incoming network traffic to the node.  |
+| Kubernetes Node       | `kubernetes.node.disk.io`         | Disk I/O on the Kubernetes node.             |
+| Cloud Instance        | `cloud.cost.hourly`               | Hourly cost of the cloud instance.           |
+| Application           | `application.activeSessions`      | Number of active user sessions.              |
+| Process Group         | `processGroup.instanceCount`      | Number of process instances in the group.    |
+| Process               | `process.cpuUsage`                | CPU usage of the process.                    |
+| Process               | `process.memoryUsage`             | Memory usage of the process.                 |
+| Logs                  | `log.timestamp`                   | Timestamp of the log entry.                  |
+| Logs                  | `log.level`                       | Log level (e.g., INFO, ERROR, WARNING).      |
+| ActiveGate            | `activeGate.connectedAgents`      | Number of agents connected to the ActiveGate.|
+| Database              | `database.queryTime.avg`          | Average query time for the database.         |
+| Network Device        | `network.device.utilization`      | Utilization percentage of the network device.|
+| Network Device        | `network.device.latency`          | Latency of the network device.               |
+
+---
+
+## **3. Tags**
+
+**Tags** are key-value pairs used to organize and filter entities.
+
+### **Examples of Tags**
+
+| **Source**            | **Tag Example**                  | **Description**                                     |
+|-----------------------|----------------------------------|---------------------------------------------------|
+| Manual                | `env:production`                | Tagging entities belonging to the production environment. |
+| Manual                | `team:frontend`                 | Tagging entities managed by the frontend team.    |
+| Manual                | `service:payment-gateway`       | Tagging a specific service for payment gateway.   |
+| Rule-Based            | `cloud:aws`                     | Dynamically tagging all AWS entities.             |
+| Rule-Based            | `cloud:azure`                   | Dynamically tagging all Azure entities.           |
+| Rule-Based            | `namespace:backend`             | Tagging all entities in the backend namespace.    |
+| Rule-Based            | `region:us-east-1`              | Tagging all entities in a specific region.        |
+| CI/CD Pipeline        | `build-version:1.2.3`           | Tagging entities based on the build version.      |
+| CI/CD Pipeline        | `deployment:blue-green`         | Tagging for blue-green deployments.               |
+| CI/CD Pipeline        | `feature:beta`                  | Tagging beta feature releases.                    |
+| API                   | `priority:high`                 | Tagging entities for high-priority resources.     |
+| API                   | `application:shopping-cart`     | Tagging all resources related to the shopping cart app. |
+| API                   | `database:mysql`                | Tagging all MySQL databases.                      |
+| API                   | `environment:staging`           | Tagging entities in the staging environment.      |
+| Integration           | `monitoring-tool:dynatrace`     | Tagging for integration with Dynatrace.           |
+| Integration           | `cost-center:marketing`         | Tagging entities for cost tracking.               |
+| Integration           | `region:ap-south-1`             | Tagging entities for APAC region.                 |
+| Integration           | `team:backend`                  | Tagging backend resources.                        |
+| Integration           | `deployment:rolling`            | Tagging rolling deployment resources.             |
+
+---
+
+## **4. Labels**
+
+**Labels** are descriptive metadata added to entities for additional business or operational context.
+
+### **Examples of Labels**
+
+| **Source**            | **Label Example**                | **Description**                                   |
+|-----------------------|----------------------------------|-------------------------------------------------|
+| Manual                | `priority=high`                 | Labeling high-priority entities.                |
+| Manual                | `namespace=frontend`            | Labeling entities in the frontend namespace.    |
+| Manual                | `cost-center=finance`           | Labeling resources for finance cost tracking.   |
+| API                   | `team=backend`                  | Adding backend team ownership.                  |
+| API                   | `region=us-west-2`              | Labeling entities in the US West region.        |
+| API                   | `deployment=blue-green`         | Labeling resources used in blue-green deployment. |
+| CI/CD Pipeline        | `application=checkout-service`  | Labeling resources related to the checkout service. |
+| CI/CD Pipeline        | `build=1.5.2`                   | Labeling resources with the specific build version. |
+| CI/CD Pipeline        | `feature=beta`                  | Labeling resources under beta testing.          |
+| CI/CD Pipeline        | `owner=devops-team`             | Adding ownership for DevOps.                    |
+| Integration           | `environment=production`        | Labeling resources for production environment.  |
+| Integration           | `project=ecommerce`             | Labeling resources under the ecommerce project. |
+| Integration           | `module=authentication`         | Labeling resources in the authentication module.|
+| Integration           | `tier=critical`                 | Adding criticality label to resources.          |
+| Integration           | `vendor=aws`                    | Labeling resources belonging to AWS.            |
+| Integration           | `database-type=nosql`           | Labeling NoSQL databases.                       |
+| Integration           | `compliance=gdpr`               | Adding GDPR compliance metadata.                |
+| Integration           | `security-level=high`           | Labeling high-security resources.               |
+| Integration           | `department=marketing`          | Adding department-specific labels.              |
+| Integration           | `purpose=analytics`             | Labeling resources used for analytics.          |
+
+---
+
+Let me know if you’d like to expand further on these examples or explore specific use cases!
+"""
+
+file_path = "/mnt/data/Dynatrace_Entity_Properties_Examples.md"
+with open(file_path, "w") as file:
+    file.write(content)
+
+file_path
 ## **6. Best Practices for Kubernetes Properties**
 
 | **Best Practices**                  | **Details**                                                                 |
@@ -171,8 +308,6 @@ fetch logs
 | **Combine Metadata with Attributes**| Filter pods by namespace (`metadata`) and CPU/memory usage (`attributes`).  |
 | **Incorporate Labels for Context**  | Use labels to track application owners, priorities, and deployment versions.|
 
-
-file_path = "/mnt/data/Dynatrace_Entity_Properties_Kubernetes.md"
 with open(file_path, "w") as file:
     file.write(content)
 
