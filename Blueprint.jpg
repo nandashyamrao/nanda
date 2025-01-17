@@ -1,0 +1,98 @@
+Models
+├── Behavioral Model
+│   ├── Entity Types:
+│   │   ├── Application
+│   │   │   ├── Entity: MyWebApp
+│   │   │   ├── Schema: builtin:application.performance
+│   │   │   ├── Attributes:
+│   │   │   │   ├── Application Name: MyWebApp
+│   │   │   │   ├── Environment: Production
+│   │   │   │   └── User Actions: Login Button Click
+│   │   │   ├── Metadata:
+│   │   │   │   ├── Owner: Frontend Team
+│   │   │   │   └── Region: US-East
+│   │   │   ├── Data Types:
+│   │   │   │   ├── Metrics: Response time, throughput
+│   │   │   │   ├── Logs: Error logs, user session logs
+│   │   │   │   └── Traces: User journeys
+│   │   │   ├── Relationships:
+│   │   │   │   ├── Depends On: API Gateway
+│   │   │   │   └── Interacts With: Backend Service
+│   │   │   └── Example: Monitors user actions and detects latency anomalies.
+│   │   ├── Host
+│   │   │   ├── Entity: MyServer01
+│   │   │   ├── Schema: builtin:host.performance
+│   │   │   ├── Attributes:
+│   │   │   │   ├── Hostname: MyServer01
+│   │   │   │   ├── OS Type: Linux
+│   │   │   │   └── CPU Cores: 8
+│   │   │   ├── Metadata:
+│   │   │   │   ├── Cloud Provider: AWS
+│   │   │   │   └── Instance Type: t3.large
+│   │   │   ├── Data Types:
+│   │   │   │   ├── Metrics: CPU usage, memory utilization
+│   │   │   │   ├── Logs: System logs, error logs
+│   │   │   │   └── Traces: Process interactions
+│   │   │   ├── Relationships:
+│   │   │   │   ├── Runs: Multiple Processes
+│   │   │   │   └── Monitored By: OneAgent
+│   │   │   └── Example: Tracks CPU usage, memory utilization, and detects spikes.
+│   │   ├── Service
+│   │       ├── Entity: PaymentService
+│   │       ├── Schema: builtin:service.performance
+│   │       ├── Attributes:
+│   │       │   ├── Service Name: PaymentService
+│   │       │   ├── Entry Point: API Gateway
+│   │       │   └── Technology: Node.js
+│   │       ├── Metadata:
+│   │       │   ├── Owner: Backend Team
+│   │       │   └── Version: v1.2.3
+│   │       ├── Data Types:
+│   │       │   ├── Metrics: Response time, request count
+│   │       │   ├── Logs: API logs, error logs
+│   │       │   └── Traces: Service dependencies
+│   │       ├── Relationships:
+│   │       │   ├── Calls: PaymentDB
+│   │       │   └── Exposed Through: API Gateway
+│   │       └── Example: Detects increased error rates or response delays.
+│
+├── Semantic Model
+│   ├── Entity Types:
+│   │   ├── Application
+│   │   │   ├── Entity: MyFrontendApp
+│   │   │   ├── Schema: builtin:application.dependencies
+│   │   │   ├── Attributes:
+│   │   │   │   ├── Application Name: MyFrontendApp
+│   │   │   │   ├── Environment: Staging
+│   │   │   │   └── Connected Services: CheckoutService
+│   │   │   ├── Metadata:
+│   │   │   │   ├── Region: EU-West
+│   │   │   │   └── Owner: Web Team
+│   │   │   ├── Data Types:
+│   │   │   │   ├── Metrics: Dependency latency
+│   │   │   │   ├── Logs: Dependency errors
+│   │   │   │   └── Traces: Dependency chains
+│   │   │   ├── Relationships:
+│   │   │   │   ├── Calls: Backend Service
+│   │   │   │   └── Depends On: CheckoutService
+│   │   │   └── Example: Maps frontend-backend communication patterns.
+│   │   ├── Database
+│   │   │   ├── Entity: PaymentDB
+│   │   │   ├── Schema: builtin:database.dependencies
+│   │   │   ├── Attributes:
+│   │   │   │   ├── Database Type: PostgreSQL
+│   │   │   │   ├── Query Latency: 20ms
+│   │   │   │   └── Connection Pool Size: 100
+│   │   │   ├── Metadata:
+│   │   │   │   ├── Owner: DB Team
+│   │   │   │   └── Backup Schedule: Daily
+│   │   │   ├── Data Types:
+│   │   │   │   ├── Metrics: Query execution time
+│   │   │   │   ├── Logs: Slow query logs
+│   │   │   │   └── Traces: Query dependencies
+│   │   │   ├── Relationships:
+│   │   │   │   ├── Queried By: PaymentService
+│   │   │   │   └── Backed Up By: Snapshot Service
+│   │   │   └── Example: Tracks services querying the database.
+│
+... (Additional models follow the same structure)
