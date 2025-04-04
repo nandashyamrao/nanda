@@ -217,4 +217,66 @@ OpenPipeline introduced:
 
 ---
 
-Would you like a before-after comparison diagram as well?
+Absolutely! Here's a **speech draft** you can use while presenting the **"Before vs After OpenPipeline" comparison diagram**. It's structured with natural pauses, emphasis points, and transitions so it sounds conversational and confident.
+
+---
+
+### 🎤 **Presentation Speech Script: "Before vs After OpenPipeline"**
+
+---
+
+👋 “Hi everyone, now let’s take a moment to look at how Dynatrace evolved — from a traditional observability platform, to the modern, real-time powerhouse it is today — thanks to **OpenPipeline**.”
+
+🔁 *(show the diagram slide)*
+
+---
+
+### 🕰️ “Let’s start on the **left side**, the 'Before OpenPipeline' world.”
+
+🗣️ “Here, we relied heavily on built-in integrations like OneAgent, which is still powerful today. But back then, everything was tightly coupled.”
+
+📦 “We had **v1 ingestion APIs**, like `/api/v1/logs/ingest` and `/api/v1/events` — these worked fine, but they were quite limited.”
+
+✂️ “There was no way to transform, mask, or enrich data inline. Any filtering or tagging had to be done **before the data even reached Dynatrace**.”
+
+📂 “Storage was fragmented — logs were sent to a log backend, metrics went to TSDB, traces to the PurePath engine — with no common lakehouse. Everything was siloed.”
+
+📊 “And perhaps the biggest limitation — we had **no DQL**. No way to dynamically parse fields, no schema-less querying. Dashboards were static, alerts were rigid, and insights were limited to what was already predefined.”
+
+🙃 *“It was observability — but not flexible, not programmable, and definitely not business-aware.”*
+
+---
+
+### 🚀 “Now let’s move to the **right side — after OpenPipeline**.”
+
+🧠 “The biggest change? **A programmable data processing layer** — OpenPipeline.”
+
+🔗 “All your sources — built-in, custom, or third-party like Fluent Bit or OpenTelemetry — now route through OpenPipeline. And right there, in-stream, data is parsed, enriched, masked, and routed intelligently.”
+
+🧹 “We can **normalize different formats**, apply regex, convert values, enrich with metadata like `team`, `region`, `trace ID` — all in real time.”
+
+🗃️ “From there, data flows into **Grail** — our unified, schema-less lakehouse. And now, everything is instantly queryable.”
+
+🔍 “With **DQL**, we can slice and dice logs and metrics, build flexible dashboards, trigger alerts, and power automation based on data that’s actually meaningful.”
+
+📈 “Even business events — like transactions, revenue drops, or user experience failures — can now be treated as first-class signals.”
+
+---
+
+### ✅ “So what’s the impact?”
+
+📉 “Less noise, better context, smarter alerts.”
+
+📈 “Real-time decision-making, at scale, across observability, security, and business teams.”
+
+🙌 “In short, **OpenPipeline turned Dynatrace from a collector into a context-driven analytics engine**.”
+
+---
+
+🧭 “And that shift — from ‘just ingesting data’ to ‘understanding it in context’ — is what powers everything we’re doing today in AI, automation, and intelligent observability.”
+
+🫱 “Any questions before we dive into how to configure your first pipeline?”
+
+---
+
+
