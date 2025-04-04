@@ -145,3 +145,15 @@ After ingestion and processing, the data is stored and utilized:
 * Leverage **OpenPipeline** to process, enrich, and route all log data before it lands in Grail.
 * Consider **Cribl Stream** or **Fluent Bit** for managing logs at scale, especially in Kubernetes or edge environments.
 * Adopt **OpenTelemetry (OTLP)** for vendor-agnostic telemetry collection, especially in modern applications.
+
+Limitations Before OpenPipeline
+
+Feature	Before OpenPipeline	Now (With OpenPipeline)
+Real-time Parsing	❌ Manual or not supported	✅ Built-in parser framework
+Field Extraction	❌ Pre-extraction only	✅ Real-time parsing
+Context Enrichment	❌ At source only	✅ Automatically during ingestion
+Routing & Buckets	❌ Static routing	✅ Rule-based dynamic routing
+Schema Flexibility	❌ Rigid schemas	✅ Schema-less via Grail
+Query Language (DQL)	❌ Not available	✅ Powerful structured queries
+Business Data Ingestion	❌ Rare use cases	✅ Prioritized with QoS
+Filtering/Masking	❌ Manual	✅ Native features in OpenPipeline
