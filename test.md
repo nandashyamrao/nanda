@@ -146,14 +146,75 @@ After ingestion and processing, the data is stored and utilized:
 * Consider **Cribl Stream** or **Fluent Bit** for managing logs at scale, especially in Kubernetes or edge environments.
 * Adopt **OpenTelemetry (OTLP)** for vendor-agnostic telemetry collection, especially in modern applications.
 
-Limitations Before OpenPipeline
+Great question. Let’s look at what **Dynatrace ingestion and processing** looked like **before OpenPipeline**, and how things were handled.
 
-Feature	Before OpenPipeline	Now (With OpenPipeline)
-Real-time Parsing	❌ Manual or not supported	✅ Built-in parser framework
-Field Extraction	❌ Pre-extraction only	✅ Real-time parsing
-Context Enrichment	❌ At source only	✅ Automatically during ingestion
-Routing & Buckets	❌ Static routing	✅ Rule-based dynamic routing
-Schema Flexibility	❌ Rigid schemas	✅ Schema-less via Grail
-Query Language (DQL)	❌ Not available	✅ Powerful structured queries
-Business Data Ingestion	❌ Rare use cases	✅ Prioritized with QoS
-Filtering/Masking	❌ Manual	✅ Native features in OpenPipeline
+---
+
+## **Before OpenPipeline**
+
+### 1. **Data Sources Still Existed**, but with Limited Ingestion Flexibility
+- **OneAgent** was still the main collector — and still is.
+- **Log and metric ingestion APIs (v1)** existed, but:
+  - Had limited **parsing** capabilities
+  - Didn’t support **custom transformations or enrichment**
+  - Data had to be well-structured **before ingestion**
+
+---
+
+### 2. **No Centralized Pipeline Layer**
+- There was **no programmable data stream processor** between ingestion and storage.
+- Logs were sent directly to the **Classic Log Viewer**.
+- Custom enrichment (e.g., adding metadata like `team` or `env`) had to be done **at the source**.
+- Filtering or masking sensitive fields (like IPs or usernames) had to be done before ingestion.
+
+---
+
+### 3. **Storage Was Split Between Different Backends**
+- **Logs** went into the classic log storage backend.
+- **Metrics** went into the **Time-Series Database (TSDB)**.
+- **Traces and events** were handled separately by the **PurePath engine**.
+- There was **no shared, unified lakehouse (like Grail)**.
+
+---
+
+### 4. **Analytics Were Tied to Predefined Context**
+- No **schema-less query engine** like **DQL**.
+- **Dashboards** and **alert rules** were based on static data models.
+- You couldn’t dynamically define fields, parse JSON logs inline, or run ad-hoc queries over raw logs.
+
+---
+
+### 5. **No On-the-Fly Normalization or Routing**
+- You couldn’t:
+  - Normalize logs from different formats (CSV, JSON, raw)
+  - Route logs to specific buckets or data retention policies
+  - Tag or enrich them **in-stream**
+
+---
+
+### **Limitations Before OpenPipeline**
+| Feature | Before OpenPipeline | Now (With OpenPipeline) |
+|--------|----------------------|--------------------------|
+| **Real-time Parsing** | ❌ Manual or not supported | ✅ Built-in parser framework |
+| **Field Extraction** | ❌ Pre-extraction only | ✅ Real-time parsing |
+| **Context Enrichment** | ❌ At source only | ✅ Automatically during ingestion |
+| **Routing & Buckets** | ❌ Static routing | ✅ Rule-based dynamic routing |
+| **Schema Flexibility** | ❌ Rigid schemas | ✅ Schema-less via Grail |
+| **Query Language (DQL)** | ❌ Not available | ✅ Powerful structured queries |
+| **Business Data Ingestion** | ❌ Rare use cases | ✅ Prioritized with QoS |
+| **Filtering/Masking** | ❌ Manual | ✅ Native features in OpenPipeline |
+
+---
+
+### Summary:
+Before OpenPipeline, Dynatrace was a powerful observability platform — but it relied heavily on **pre-structured, pre-cleaned data** and lacked a flexible, programmable **data stream processor**.  
+OpenPipeline introduced:
+- Stream-based processing
+- Data normalization
+- Dynamic enrichment
+- Schema-less Grail storage
+- And truly unified observability, security, and business data
+
+---
+
+Would you like a before-after comparison diagram as well?
