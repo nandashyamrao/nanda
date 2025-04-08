@@ -387,7 +387,53 @@ PARSE(content, "timestamp:timestamp logLevel:logLevel [service] - content")
 
 Would you like DQL templates for dashboards or anomaly detection rules next?
 '''
+Excellent question!
 
+In the context of log ingestion and processing (especially for tools like Dynatrace OpenPipeline, Fluent Bit, Cribl, or OpenTelemetry), log formats define how the log data is structured or written before being parsed and processed.
+
+⸻
+
+✅ Common Log Format Types
+
+Format Type	Description	Example
+JSON	Structured, machine-readable format. Most modern apps prefer this.	{ "timestamp": "...", "logLevel": "INFO", "message": "Started app" }
+Key-Value (KV)	Flat format with keys and values separated by = or :	timestamp=2024-04-08 level=ERROR msg="Failed login"
+Delimited (CSV/TSV)	Values separated by commas or tabs. Must rely on order or header row.	2024-04-08, ERROR, Failed login
+Line-based Text	Human-readable text with embedded timestamp/severity. Most legacy systems use this.	2024-04-08 12:00:00 ERROR Failed login attempt
+Syslog	Standardized log format used by Unix/Linux systems and network devices	<34>1 2024-04-08T12:00:00Z hostname appname 1234 - - Login failed
+Log4j/Logback Pattern Layout	Log lines follow a custom string pattern defined in Java logging frameworks	%d{yyyy-MM-dd HH:mm:ss} %-5p [%c] - %m%n
+Apache/Nginx Access Logs	Predefined formats used in web server access logs	127.0.0.1 - - [08/Apr/2024:12:00:00 +0000] "GET /index.html HTTP/1.1" 200 1024
+Multiline (Stack Trace)	Logs that span multiple lines — common with Java/Python errors	First line: Exception..., Next lines: indented stack frames
+
+
+
+⸻
+
+🧠 How Dynatrace OpenPipeline Handles These
+
+Format Type	Parsing Support	Notes
+JSON	✅ Automatic detection	
+KV	✅ Via parsing rules (key=value)	
+Line-based	✅ With PARSE() using regex or structure	
+Multiline	⚠️ Needs pre-processing (Fluent Bit, Cribl) or merging	
+Syslog	✅ Through integration or Fluent Bit	
+Apache/Nginx	✅ Custom PARSE() or Fluent Bit/Nginx plugin	
+CSV	✅ Via Cribl/OpenTelemetry Collector → JSON	
+Log4j Layout	✅ With custom regex-based PARSE() rules	
+
+
+
+⸻
+
+✅ Best Practices
+	•	Prefer JSON wherever possible — it’s easily parsable and rich in context.
+	•	Avoid multiline logs unless your collector merges them properly.
+	•	If using custom patterns (like Log4j), document them and build robust PARSE() rules.
+	•	Use a log shipper (e.g., Fluent Bit or Cribl) to normalize formats before reaching OpenPipeline.
+
+⸻
+
+Would you like examples of how to write parsing rules for each format? Or a visual reference guide comparing them?
 # Save as markdown file
 file_path = Path("/mnt/data/dynatrace_log_formats_parsing_examples.md")
 file_path.write_text(log_format_guide)
