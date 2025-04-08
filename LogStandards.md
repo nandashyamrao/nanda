@@ -107,3 +107,152 @@ Final Tip
 
 You should now have a usable Markdown file on your computer.
 
+from pathlib import Path
+
+# Full markdown with focus on severity_number and OpenPipeline support
+markdown_content = '''\
+# 🧾 Log Hygiene & Parsing Validation Checklist for Dynatrace OpenPipeline (Updated 2025-04-08)
+
+This checklist helps developers, SREs, and platform engineers ensure their application logs are clean, parsable, and usable by Dynatrace’s AI and analytics systems. Following these practices improves MTTR, enhances Davis AI accuracy, reduces ingestion costs, and strengthens security posture through better log visibility and masking.
+
+---
+
+## 🧱 Log Formatting & Structure
+
+- ✅ Logs follow a **consistent format** (JSON or documented patterns).
+- ✅ Each log line includes a **parseable timestamp** (ISO8601, RFC3339, or `yyyy-MM-dd HH:mm:ss.SSS`).
+- ✅ Multi-line logs (e.g., stack traces) are properly handled.
+- ✅ All logs include a **message field** summarizing the event.
+- ✅ Timestamps are **in UTC** for global consistency.
+- ✅ Logging levels are used appropriately to avoid noise in production.
+
+---
+
+## 🚨 Severity Classification (`logLevel`, `severity_text`, `severity_number`)
+
+- ✅ Standard levels used: `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`, `FATAL`.
+- ✅ OpenTelemetry fields supported:
+  - `severity_text`: Human-readable log level (`INFO`, `ERROR`, etc.)
+  - `severity_number`: Numerical range from 1–24
+- ✅ Severity ranges:
+  - `TRACE`: 1–4
+  - `DEBUG`: 5–8
+  - `INFO`: 9–12
+  - `WARN`: 13–16
+  - `ERROR`: 17–20
+  - `FATAL`: 21–24
+- ⚠️ Logs **not matching valid severity ranges** should be remapped or flagged.
+- ✅ Custom levels (`CRIT`, `MAJOR`) are remapped using `FIELDS_REMAP`.
+- ❌ No important logs should show `logLevel: NONE`.
+
+---
+
+## 🔄 How Dynatrace OpenPipeline Handles `severity_number` Better
+
+| Feature                             | Benefit                                                                 |
+|-------------------------------------|-------------------------------------------------------------------------|
+| `FIELDS_REMAP()`                    | Map `severity_number` to standard `logLevel` during ingestion.         |
+| Fallback logic                      | Derive `logLevel` from number if `severity_text` is missing.           |
+| Conditional routing                 | Route logs differently based on numeric severity.                      |
+| Normalization at scale              | Enforce uniform log levels across mixed sources (OTel, Fluent Bit, etc.)|
+| Traceability                        | Combine severity with `trace_id`, `span_id`, and service context.      |
+
+### 🛠️ Example Mapping Rule:
+
+```dql
+FIELDS_REMAP(logLevel, {
+  "^([1-4])$": "TRACE",
+  "^([5-8])$": "DEBUG",
+  "^([9-12])$": "INFO",
+  "^([13-16])$": "WARN",
+  "^([17-20])$": "ERROR",
+  "^([21-24])$": "FATAL"
+}, fallback="INFO")
+```
+
+---
+
+## 🧩 Enrichment & Context
+
+- ✅ Include contextual IDs: `environment`, `team`, `region`, `k8s.pod.name`, `host.name`.
+- ✅ Include `service.name` explicitly.
+- ✅ Add metadata using `FIELDS_ADD`, `FIELDS_COPY`.
+- ✅ Mask sensitive data using `FIELDS_MASK`.
+- ✅ Add `trace_id` and `span_id` for trace correlation.
+
+---
+
+## 🔍 Testing & Validation
+
+- ✅ Test format changes in staging first.
+- ✅ Use the **Dynatrace Log Viewer** to inspect parsed fields.
+- ✅ Validate with DQL:
+  ```dql
+  fetch logs
+  | filter logLevel == "ERROR"
+  | summarize count() by service.name
+  ```
+
+---
+
+## 🔁 Dynatrace OpenPipeline Processing
+
+- ✅ Ensure logs pass through all stages:
+  - **Parse** → **Enrich** → **Transform** → **Mask** → **Route**
+- ✅ Use `FIELDS_REMAP`, `FIELDS_RENAME`, `FIELDS_ADD`, and `FIELDS_MASK` strategically.
+- ✅ Routing rules associate logs with proper services/entities.
+- ✅ Validate OpenPipeline rules using test log samples.
+
+---
+
+## 📊 Querying & Dashboarding
+
+- ✅ Fields like `logLevel`, `service.name`, `env` are visible in DQL.
+- ✅ Dashboards can break down logs by severity and source.
+- ✅ Problem cards use logs effectively when severity is parsed.
+- ✅ DQL sample:
+  ```dql
+  fetch logs
+  | summarize count() by logLevel, service.name
+  ```
+
+---
+
+## 🧠 Davis AI & Problem Detection
+
+- ✅ Davis can use logs with `logLevel` to identify or enrich issues.
+- ✅ Proper severity detection improves root cause analysis.
+- ✅ Logs correlate with traces and metrics on the same dashboard.
+
+---
+
+## 🛡️ Governance & Maintenance
+
+- ✅ Standards are documented and visible to developers.
+- ✅ Rules are versioned and reviewed quarterly.
+- ✅ `logLevel: NONE` rate is monitored and reduced.
+- ✅ Ingestion volume and noise are regularly evaluated.
+
+---
+
+## 🧪 DQL for Unparsed Logs
+
+```dql
+fetch logs
+| filter logLevel == "NONE"
+| summarize count(), earliest(timestamp), latest(timestamp) by log.source, dt.entity.host, dt.process.name
+| sort count() desc
+```
+
+---
+
+## 🚀 Final Thoughts
+
+> Good logs aren't just for debugging. They're for **AI-driven operations**, **security insight**, **compliance auditing**, and **cost visibility**. Treat your logs as telemetry-grade data.
+'''
+
+# Save markdown file
+file_path = Path("/mnt/data/dynatrace_openpipeline_severity_checklist.md")
+file_path.write_text(markdown_content)
+
+file_path.name
