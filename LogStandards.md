@@ -636,7 +636,77 @@ END RequestId...
 
 PARSE(content, "timestamp:timestamp message:content")
 
+from pathlib import Path
 
+# Markdown-formatted explanation of the log formats and parsing strategies
+log_format_explanation = '''\
+# 📘 Log Format Types Explained by Technology Stack
+
+This document explains various log format types associated with your tech stack and how to parse them efficiently using Dynatrace OpenPipeline.
+
+---
+
+## 📊 Table of Log Format Strategies
+
+| Technology / Stack         | Format Type             | Parser Type       | Parsing Notes |
+|----------------------------|--------------------------|--------------------|----------------|
+| **Java (Spring / Log4j)**   | Pattern Layout            | `PARSE()`          | Uses patterns like `%d{yyyy-MM-dd HH:mm:ss} %-5p [%c] - %m%n`. Requires extraction of timestamp, logLevel, logger, and message using `PARSE()`. |
+| **Python (Django / Flask)** | Line-based                | `PARSE()`          | Example log: `2024-04-08 12:00:00,123 ERROR root: Something failed`. Parse timestamp, logLevel, logger, and content. |
+| **Go**                      | JSON or flat structured   | JSON / `PARSE()`   | Uses logs like `time="..." level="error" msg="..."`. JSON auto-detect works, or remap fields like `level → logLevel`. |
+| **.NET Core / ASP.NET**     | JSON                      | Auto-detect        | Emits Serilog/Microsoft JSON logs. Normalize field names using `FIELDS_RENAME(Level, logLevel)`. |
+| **Apache / Nginx**          | Access Log                | Regex / `PARSE()`  | Logs like `127.0.0.1 - - [timestamp] "METHOD URI PROTOCOL" status`. Use brackets and quotes in parsing. |
+| **Mongo / PostgreSQL / MySQL** | Syslog or DB event logs | Line parse         | Logs contain timestamp, severity, and module. Parse with `PARSE(content, "timestamp:timestamp logLevel:logLevel [module] content")`. |
+| **Fluent Bit**              | JSON                      | Auto-detect        | Fluent Bit sends structured logs. No parsing required, but fields may need enriching/renaming. |
+| **Lambda / AWS Logs**       | JSON or embedded format   | Merge + `PARSE()`  | CloudWatch logs are embedded or multiline. Use Fluent Bit or Cribl to merge, then extract JSON content. |
+
+---
+
+## 🛠️ Example Parsing Rules
+
+### Java Pattern
+```dql
+PARSE(content, "timestamp:timestamp logLevel:logLevel [logger] - content")
+```
+
+### Python Log Line
+```dql
+PARSE(content, "timestamp:timestamp logLevel:logLevel logger:content")
+```
+
+### Go Log Line
+```dql
+PARSE(content, "time:timestamp level:logLevel msg:content")
+```
+
+### Apache Access Log
+```dql
+PARSE(content, "ip - - [timestamp] \\\"method url protocol\\\" status bytes")
+```
+
+### MongoDB / Postgres
+```dql
+PARSE(content, "timestamp:timestamp severity:logLevel module:content")
+```
+
+---
+
+## ✅ Best Practices
+
+- Prefer **structured JSON** formats where possible.
+- Normalize log levels for consistency using `FIELDS_REMAP()` or `FIELDS_RENAME()`.
+- Pre-process multiline logs before sending them to Dynatrace.
+- Validate parsing rules in staging environments before production rollout.
+
+---
+
+Would you like this included in your enterprise logging standards or deployed to a shared knowledge repo?
+'''
+
+# Save to markdown
+file_path = Path("/mnt/data/log_format_types_and_parsing_rules.md")
+file_path.write_text(log_format_explanation)
+
+file_path.name
 
 ⸻
 
