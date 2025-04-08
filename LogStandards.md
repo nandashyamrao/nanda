@@ -499,7 +499,148 @@ FIELDS_REMAP(logLevel, {
 - Document and test parsing rules per service or language.
 
 ---
+Here’s a detailed explanation of each row from your table to help you better understand log format types, parsing strategies, and how Dynatrace OpenPipeline handles them:
 
+⸻
+
+1. Java (Spring / Log4j)
+	•	Format Type: Pattern Layout
+	•	Parser Type: PARSE()
+	•	Parsing Notes:
+	•	Java applications using Log4j or Logback often format logs using custom patterns like:
+
+%d{yyyy-MM-dd HH:mm:ss} %-5p [%c] - %m%n
+
+
+	•	You need to build a PARSE() rule to extract fields such as timestamp, log level, logger class, and the message.
+	•	Example Rule:
+
+PARSE(content, "timestamp:timestamp logLevel:logLevel [logger] - content")
+
+
+
+⸻
+
+2. Python (Django / Flask)
+	•	Format Type: Line-Based (unstructured)
+	•	Parser Type: PARSE()
+	•	Parsing Notes:
+	•	Python apps log in formats like:
+
+2024-04-08 12:00:00,123 ERROR root: Something failed
+
+
+	•	This needs parsing of timestamp, severity, and logger name.
+	•	Example Rule:
+
+PARSE(content, "timestamp:timestamp logLevel:logLevel logger:content")
+
+
+
+⸻
+
+3. Go
+	•	Format Type: JSON or Structured Flat
+	•	Parser Type: JSON auto-detect or PARSE()
+	•	Parsing Notes:
+	•	Go apps often use structured logging:
+
+{ "time": "2024-04-08T12:00:00Z", "level": "error", "msg": "User failed login" }
+
+
+	•	Dynatrace can auto-detect JSON, but you may want to remap fields:
+
+FIELDS_RENAME(level, logLevel)
+
+
+
+⸻
+
+4. .NET Core / ASP.NET
+	•	Format Type: JSON
+	•	Parser Type: Auto-detect
+	•	Parsing Notes:
+	•	.NET uses Serilog or Microsoft.Extensions.Logging, which emit JSON like:
+
+{ "Timestamp": "...", "Level": "Error", "Message": "..." }
+
+
+	•	Normalize keys to match Dynatrace expectations:
+
+FIELDS_RENAME(Level, logLevel)
+
+
+
+⸻
+
+5. Apache / Nginx Access Logs
+	•	Format Type: Access Log
+	•	Parser Type: Regex or PARSE()
+	•	Parsing Notes:
+	•	Logs are formatted like:
+
+127.0.0.1 - - [08/Apr/2024:12:00:00 +0000] "GET /index.html HTTP/1.1" 200 1024
+
+
+	•	You must use quotes and brackets to delimit values.
+	•	Example Rule:
+
+PARSE(content, "ip - - [timestamp] \\\"method url protocol\\\" status bytes")
+
+
+
+⸻
+
+6. MongoDB / PostgreSQL / MySQL
+	•	Format Type: Syslog-style or Line-Based
+	•	Parser Type: Line parse
+	•	Parsing Notes:
+	•	Example log:
+
+2024-04-08 12:00:00 ERROR [replset] connection refused
+
+
+	•	Parse timestamp, severity, and text using basic rules:
+
+PARSE(content, "timestamp:timestamp logLevel:logLevel [module] content")
+
+
+
+⸻
+
+7. Fluent Bit
+	•	Format Type: JSON
+	•	Parser Type: Auto-detect
+	•	Parsing Notes:
+	•	Fluent Bit often emits logs in JSON format, possibly with Kubernetes metadata.
+	•	No need for parsing — but field renaming and enrichment may be useful:
+
+FIELDS_RENAME(level, logLevel)
+
+
+
+⸻
+
+8. Lambda / AWS Logs (CloudWatch)
+	•	Format Type: JSON or Embedded in Wrappers
+	•	Parser Type: Pre-merge + PARSE()
+	•	Parsing Notes:
+	•	Logs might look like:
+
+START RequestId...
+{"timestamp":"...","message":"..."}
+END RequestId...
+
+
+	•	You must merge multiline logs first (using Fluent Bit or Cribl), then apply parsing to the embedded JSON:
+
+PARSE(content, "timestamp:timestamp message:content")
+
+
+
+⸻
+
+Would you like these compiled into a downloadable markdown file or a diagram version?
 Would you like to integrate this into your standards repo or generate a downloadable version?
 '''
 
