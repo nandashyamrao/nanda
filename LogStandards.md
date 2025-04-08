@@ -432,7 +432,82 @@ Log4j Layout	✅ With custom regex-based PARSE() rules
 	•	Use a log shipper (e.g., Fluent Bit or Cribl) to normalize formats before reaching OpenPipeline.
 
 ⸻
+from pathlib import Path
 
+# Regenerating the markdown content after code state reset
+updated_log_standards = '''\
+# 📘 Extended Log Format Standards & Parsing Rules Based on Detected Technologies
+
+This enhanced guide augments your current Dynatrace log hygiene and parsing standards by analyzing log formats from the technologies detected in your environment. It includes additional log formats, parsing examples, and DQL-friendly mappings to ensure end-to-end observability.
+
+---
+
+## ✅ Additional Log Formats & Rules per Technology
+
+| Technology / Stack         | Likely Log Format          | Parsing Consideration                                               | Rule Suggestion Example |
+|----------------------------|----------------------------|----------------------------------------------------------------------|--------------------------|
+| **Java (Spring, Log4j)**   | Pattern layout / multiline | Example: `%d{yyyy-MM-dd HH:mm:ss} %-5p [%c] - %m%n`                 | `PARSE(content, "timestamp:timestamp logLevel:logLevel [logger] - content")` |
+| **Python (Django, Flask)** | Line-based with timestamp  | Example: `2024-04-08 12:00:00,123 ERROR root: Something failed`     | `PARSE(content, "timestamp:timestamp logLevel:logLevel logger:content")` |
+| **Go**                     | JSON or flat structured    | Example: `time="..." level="error" msg="..."`                       | `PARSE(content, "time:timestamp level:logLevel msg:content")` |
+| **Node.js**                | JSON (often custom)        | JSON.stringify or Winston logger format                             | JSON auto-detect; enrich if needed |
+| **.NET Core / ASP.NET**    | JSON (Serilog / MS schema) | Ensure field normalization: `level → logLevel`                      | Auto-detect + `FIELDS_RENAME(level, logLevel)` |
+| **Scala / Akka / Spark**   | Pattern layout             | Example: `%d %-5p %c{1}: %m%n`                                       | `PARSE(content, "timestamp:timestamp logLevel:logLevel logger:content")` |
+| **Apache / Nginx**         | Access log format          | Example: `127.0.0.1 - - [timestamp] "METHOD URI PROTOCOL" status`   | `PARSE(content, "ip - - [timestamp] \\"method url protocol\\" status bytes")` |
+| **MongoDB / MySQL / PGSQL**| Syslog or DB event logs    | Format: `timestamp severity [module] message`                       | `PARSE(content, "timestamp:timestamp severity:logLevel module:content")` |
+| **RabbitMQ / MQ Brokers**  | Line logs or JSON events   | Format: `timestamp type=ERROR msg="..."`                            | `PARSE(content, "timestamp:timestamp type:logLevel msg:content")` |
+| **AWS Lambda / CloudWatch**| Embedded JSON              | Logs wrapped in CloudWatch wrappers, may require flattening         | Use pre-merge + JSON parsing |
+| **Cribl / Fluent Bit**     | JSON + OTEL fields         | May include `severity_number`, `body`, etc.                         | Use `FIELDS_REMAP(logLevel, {...})` |
+| **React / Angular**        | Console logs, JS errors    | Not structured — often stack trace or printf-style                  | Best pre-processed at source or via browser collector |
+
+---
+
+## 🧩 Suggested Rule Block (for `severity_number`)
+
+```dql
+FIELDS_REMAP(logLevel, {
+  "^([1-4])$": "TRACE",
+  "^([5-8])$": "DEBUG",
+  "^([9-12])$": "INFO",
+  "^([13-16])$": "WARN",
+  "^([17-20])$": "ERROR",
+  "^([21-24])$": "FATAL"
+}, fallback="INFO")
+```
+
+---
+
+## 📋 Recommended Format Detection Matrix
+
+| Format Type         | Use Case                        | Detection     | Dynatrace Rule                     |
+|---------------------|----------------------------------|---------------|------------------------------------|
+| JSON                | Modern apps / APIs               | Auto-detect   | Optional enrich / rename           |
+| Key-Value           | Bash / custom output             | Manual parse  | `PARSE(content, "key=value ...")`  |
+| Pattern layout      | Java / Log4j / Scala / Spark     | Manual parse  | `PARSE()` using log pattern        |
+| Line-based          | Python, Bash scripts             | Manual parse  | `timestamp`, `level`, `content`    |
+| Apache/Nginx Access | Web logs                         | Regex         | `PARSE()` with quotes & brackets   |
+| Syslog              | Linux / Mongo / DBs              | Manual parse  | `timestamp`, `severity`, `message` |
+| CSV / Delimited     | Tabular logs or exports          | `PARSECSV()`  | Supply field array                 |
+| Multiline           | Java/Python stack traces         | Pre-merge     | Handled by Fluent Bit/Cribl        |
+
+---
+
+## ✅ Summary & Best Practices
+
+- Prioritize **JSON** or **consistent pattern-based logs**.
+- Normalize `logLevel` field for AI and DQL filtering.
+- Handle **multiline** and **severity_number** using upstream processors.
+- Document and test parsing rules per service or language.
+
+---
+
+Would you like to integrate this into your standards repo or generate a downloadable version?
+'''
+
+# Save markdown
+file_path = Path("/mnt/data/dynatrace_log_formats_extended.md")
+file_path.write_text(updated_log_standards)
+
+file_path.name
 Would you like examples of how to write parsing rules for each format? Or a visual reference guide comparing them?
 # Save as markdown file
 file_path = Path("/mnt/data/dynatrace_log_formats_parsing_examples.md")
