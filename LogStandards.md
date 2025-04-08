@@ -256,3 +256,140 @@ file_path = Path("/mnt/data/dynatrace_openpipeline_severity_checklist.md")
 file_path.write_text(markdown_content)
 
 file_path.name
+from pathlib import Path
+
+# Prepare a markdown guide comparing log format types with parsing examples
+log_format_guide = '''\
+# 📘 Log Format Types & Parsing Examples for Dynatrace OpenPipeline
+
+This guide compares common log formats and provides examples of how to parse them using Dynatrace OpenPipeline's `PARSE()` function or preprocessing tools.
+
+---
+
+## 1. 🟢 JSON Format (Recommended)
+
+### Example Log:
+```json
+{ "timestamp": "2024-04-08T12:00:00Z", "logLevel": "INFO", "message": "Service started", "service": "auth-service" }
+```
+
+### Parsing:
+Dynatrace auto-detects JSON and extracts fields. No custom parsing usually needed.
+
+---
+
+## 2. 🔵 Key-Value Format
+
+### Example Log:
+```
+timestamp=2024-04-08 level=ERROR msg="Failed login" user=abc123
+```
+
+### Parsing Rule:
+```dql
+PARSE(content, "timestamp:timestamp level:logLevel msg:content user")
+```
+
+---
+
+## 3. 🟡 Line-Based Log (Simple Pattern)
+
+### Example Log:
+```
+2024-04-08 12:00:00 ERROR [auth-service] Failed login attempt
+```
+
+### Parsing Rule:
+```dql
+PARSE(content, "timestamp:timestamp logLevel:logLevel [service] content")
+```
+
+---
+
+## 4. 🟣 Apache/Nginx Access Logs
+
+### Example Log:
+```
+127.0.0.1 - - [08/Apr/2024:12:00:00 +0000] "GET /index.html HTTP/1.1" 200 1024
+```
+
+### Parsing Rule:
+```dql
+PARSE(content, "ip - - [timestamp] \\"method url protocol\\" status bytes")
+```
+
+---
+
+## 5. 🧡 Syslog
+
+### Example Log:
+```
+<34>1 2024-04-08T12:00:00Z hostname appname 1234 - - Login failed
+```
+
+### Parsing Rule:
+```dql
+PARSE(content, "<priority>version timestamp host app pid - - content")
+```
+
+---
+
+## 6. 🔶 Delimited Format (CSV)
+
+### Example Log:
+```
+2024-04-08, ERROR, Failed login, auth-service
+```
+
+### Parsing Rule:
+```dql
+PARSECSV(content, ["timestamp", "logLevel", "content", "service"])
+```
+
+---
+
+## 7. 🔴 Log4j Pattern Layout
+
+### Log Pattern:
+```
+%d{yyyy-MM-dd HH:mm:ss} %-5p [%c] - %m%n
+```
+
+### Example Log:
+```
+2024-04-08 12:00:00 ERROR [auth-service] - Login failed
+```
+
+### Parsing Rule:
+```dql
+PARSE(content, "timestamp:timestamp logLevel:logLevel [service] - content")
+```
+
+---
+
+## 8. ⚠️ Multiline Logs (e.g., Java stack traces)
+
+- Must be merged **before ingestion** using tools like Fluent Bit or Cribl.
+- Each stack trace should be captured as one log event.
+
+---
+
+## ✅ Recommendation
+
+| Format    | Recommended | Why                          |
+|-----------|-------------|-------------------------------|
+| JSON      | ✅ Best      | Fully structured, rich fields |
+| Key-Value | ✅ Good      | Simple and clean              |
+| Line/Text | ⚠️ Okay      | Requires custom rules         |
+| Multiline | ❌ Avoid     | Needs merging logic           |
+
+---
+
+Would you like DQL templates for dashboards or anomaly detection rules next?
+'''
+
+# Save as markdown file
+file_path = Path("/mnt/data/dynatrace_log_formats_parsing_examples.md")
+file_path.write_text(log_format_guide)
+
+file_path.name
