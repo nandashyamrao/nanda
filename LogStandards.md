@@ -707,7 +707,40 @@ file_path = Path("/mnt/data/log_format_types_and_parsing_rules.md")
 file_path.write_text(log_format_explanation)
 
 file_path.name
+# 🟡 Potential Enhancements (Optional or Niche)
 
+These technologies and use cases are either niche, emerging, or require special handling before being fully parsed and ingested by Dynatrace OpenPipeline.
+
+---
+
+- **Edge Devices / IoT (MQTT, SNMP)**  
+  May require structured key-value parsing. Some messages may need to be pre-processed for timestamp or log level extraction.
+
+- **gRPC / RSocket**  
+  These protocols often transmit messages in base64 or binary. Log payloads may need to be decoded or structured before parsing.
+
+- **Legacy Windows (Event Viewer, Perfmon)**  
+  Logs need to be exported (e.g., via Windows Event Forwarder) and transformed into JSON or key-value format before ingestion.
+
+- **Security Logging (Vault, SAML, OAuth)**  
+  Must ensure that sensitive fields like tokens, secrets, and credentials are redacted or masked using `FIELDS_MASK`.
+
+- **Front-End Logging (React, Angular)**  
+  JavaScript errors and logs should be captured using `console.error`, `window.onerror`, or a browser collector. Often sent to an endpoint in JSON format.
+
+- **CI/CD Tools (Jenkins, GitLab)**  
+  Build and deploy logs are typically line-based. Ensure timestamps and log levels are parsed using `PARSE()` rules.
+
+- **Cloud Service Logs (CloudTrail, Azure Monitor)**  
+  Logs are deeply nested JSON and may include metadata. Use flattening (via Cribl, Lambda, or Fluent Bit) before applying parsing rules.
+
+- **Kubernetes / OpenShift**  
+  Container stdout/stderr logs are automatically captured by Fluent Bit or OTEL sidecars. Enrichment with pod metadata is recommended.
+
+---
+
+✅ **Tip:**  
+If you use any of these, create custom parsing rules, pre-process logs where needed, and test in staging before applying globally.
 ⸻
 
 Would you like these compiled into a downloadable markdown file or a diagram version?
