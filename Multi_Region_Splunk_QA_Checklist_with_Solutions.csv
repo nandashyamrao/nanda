@@ -1,0 +1,19 @@
+Category,Key Question,Recommended Solution
+Architecture,How do we ensure config consistency between regions?,Use CI/CD pipelines or GitOps to sync apps/configs from a centralized repo to both regions.
+Architecture,Do we need multi-site SH and Indexer Clusters?,"Yes, to ensure high availability and data resilience, configure multi-site clustering."
+Architecture,"What is our replication model (SmartStore, dual-forwarding, or indexer clustering)?",Use SmartStore for cold data (with S3 CRR) and indexer clustering for warm data replication.
+Availability & Failover,How is failover managed (Route 53 vs. Global Accelerator)?,Use Route 53 for DNS failover or AWS Global Accelerator for real-time routing with health checks.
+Availability & Failover,What is our expected failover time?,"With Global Accelerator or ASG, target failover time is < 1–2 minutes."
+Availability & Failover,Does the DR region auto-scale when the primary fails?,"Yes, configure Auto Scaling Groups in the DR region to scale indexers/search heads as needed."
+Data Flow & Ingest,How do Universal Forwarders route logs in failover?,Configure forwarders with dual outputs or use DNS-based region-specific endpoints.
+Data Flow & Ingest,Do we ingest into both regions simultaneously?,"Yes, if full HA is required. Otherwise, forwarders can send primarily to local region with failover backup."
+Licensing & Capacity,Does Splunk licensing change for multi-region setups?,"No, Splunk license is based on total ingest volume, not number of regions."
+Licensing & Capacity,Can each region independently handle 100% of the load if one fails?,"Yes, design both regions to scale to full ingest capacity in case of failure."
+Cost & Optimization,What is the additional monthly cost for dual-region?,"Estimate is ~1.8x original cost; optimize with savings plans, SmartStore, and ASGs."
+Cost & Optimization,How can we reduce cross-region transfer costs?,"Use regional ingest endpoints, SmartStore caching, and avoid unnecessary cross-region queries."
+Data Retention & Storage,How are SmartStore buckets replicated across regions?,Enable S3 CRR between SmartStore buckets; use lifecycle policies for archiving.
+Data Retention & Storage,Do we handle cold/warm bucket sync automatically?,Use scripts or Splunk's native clustering tools to sync cold/warm data where needed.
+Monitoring & Observability,Is there a unified monitoring view across both regions?,Deploy Monitoring Console in each region and use federated search or consolidated dashboards.
+Monitoring & Observability,How do we detect and alert on split-brain conditions?,Set health checks and search head status monitors; trigger alerts for quorum loss or heartbeat failures.
+Security & Compliance,Are both regions compliant with security policies?,Ensure compliance mappings are consistent; use AWS Config/Audit Manager across both regions.
+Security & Compliance,"Is encryption consistent across both regions (KMS, TLS)?","Use AWS KMS in each region, enforce TLS/SSL for data in transit, and align encryption policies."
